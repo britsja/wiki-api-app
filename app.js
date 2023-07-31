@@ -74,3 +74,49 @@ app.route('/articles')
             res.send("Error deleting all articles")
         }   
     });
+
+app.route("/articles/:articleTitle")
+    .get(async function(req, res) {
+        try {
+            const articleToFind = req.params.articleTitle;
+            const articleFound = await Article.findOne({title: articleToFind});            
+            res.send(articleFound);
+        } 
+        catch(err) {
+            res.send("Error: " + err);
+        }
+    })
+    .put(async function(req, res) {
+        try {
+            const articleToFind = req.params.articleTitle;
+            await Article.updateOne(
+                {title: articleToFind}, 
+                {title: req.body.title, content: req.body.content})    
+            res.send("Article " + articleToFind + " updated")            
+        }
+        catch(err) {
+            console.log("Error: " + err)
+        }
+    })
+    .patch(async function(req, res) {
+        try {
+            const articleToFind = req.params.articleTitle;
+            await Article.updateOne(
+                {title: articleToFind}, 
+                {$set: req.body});
+            res.send("Content for article " + articleToFind + " updated")            
+        }
+        catch(err) {
+            console.log("Error: " + err)
+        }
+    })
+    .delete(async function(req, res) {
+        try {
+            const articleToFind = req.params.articleTitle;
+            await Article.deleteOne({title: articleToFind})
+            res.send("Article Deleted: " + articleToFind )
+        }
+        catch(err) {
+            console.log("Error: " + err);
+        }
+    });
