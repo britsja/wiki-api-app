@@ -37,42 +37,40 @@ app.get("/", function(req, res) {
     res.send("Use /articles to get API data")    
 })
 
-app.get("/articles", function(req, res) {
-    try {
-    Article.find().then((data) => {
-        if (data.length > 0) {
-            const returnedArticles = data;
-            res.send(data);
-        } else {
-            res.send("Database is empty");
-        }
-    });
-    } catch {
-        res.send("Error getting data from database");
-    }
-    
-});
-
-app.post("/articles", async function(req, res) {
-    try {
-        const newArticle = new Article({
-            title: req.body.title,
-            content: req.body.content
+app.route('/articles')
+    .get(function(req, res) {
+        try {
+        Article.find().then((data) => {
+            if (data.length > 0) {
+                const returnedArticles = data;
+                res.send(data);
+            } else {
+                res.send("Database is empty");
+            }
         });
-        await newArticle.save();
-        res.send("Article Submitted");
-    } catch {
-        res.send("Cannot Save Article - Please ensure you are using title and content for the form names")
-    }
-});
-
-app.delete("/articles", async function(req, res) {
-    try {
-        await Article.deleteMany();
-        res.send("Articles Deleted")
-    } 
-    catch {
-        res.send("Error deleting all articles")
-    }   
-});
-
+        } catch {
+            res.send("Error getting data from database");
+        }
+        
+    })
+    .post(async function(req, res) {
+        try {
+            const newArticle = new Article({
+                title: req.body.title,
+                content: req.body.content
+            });
+            await newArticle.save();
+            res.send("Article Submitted");
+        } catch {
+            res.send("Cannot Save Article - Please ensure you are using title and content for the form names")
+        }
+    })
+    .delete(async function(req, res) {
+        try {
+            await Article.deleteMany();
+            res.send("Articles Deleted")
+        } 
+        catch {
+            res.send("Error deleting all articles")
+        }   
+    });
